@@ -26,12 +26,15 @@ public class HttpClientTest {
             //获取HttpClient客户端
             httpClient = HttpClients.createDefault();
             //创建HttpGet
-            httpGet = new HttpGet("https://www.csdn.net");
+            httpGet = new HttpGet("https://www.tuicool.com");
+            httpGet.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:61.0)");
             //执行
             CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
+            System.out.println("StatusCode:" + httpResponse.getStatusLine().getStatusCode());
             //返回HttpEntity
             HttpEntity httpEntity = httpResponse.getEntity();
-            System.out.println(EntityUtils.toString(httpEntity,"UTF-8"));
+            System.out.println(httpEntity.getContentType().getName() + ":" + httpEntity.getContentType().getValue());
+            System.out.println(EntityUtils.toString(httpEntity, "UTF-8"));
         } catch (IOException e) {
             e.printStackTrace();
         }
