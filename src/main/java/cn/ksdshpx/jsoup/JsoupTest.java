@@ -69,4 +69,56 @@ public class JsoupTest {
             }
         }
     }
+
+    @Test
+    public void testSelector() {
+        CloseableHttpClient httpClient = null;
+        HttpGet httpGet = null;
+        CloseableHttpResponse httpResponse = null;
+        try {
+            //获取HttpClient客户端
+            httpClient = HttpClients.createDefault();
+            //创建HttpGet
+            httpGet = new HttpGet("https://www.cnblogs.com/");
+            httpGet.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:61.0)");
+            //执行
+            httpResponse = httpClient.execute(httpGet);
+            //返回HttpEntity
+            HttpEntity httpEntity = httpResponse.getEntity();
+            String content = EntityUtils.toString(httpEntity, "UTF-8");
+            Document document = Jsoup.parse(content);
+            Elements linkElements = document.select("#post_list .post_item .post_item_body h3 a");
+            for (Element linkElement : linkElements) {
+                System.out.println("博客标题："+linkElement.text());
+                System.out.println("博客地址："+linkElement.attr("href"));
+            }
+            System.out.println("===========================");
+            Elements aElements = document.select("a[href]");
+            for (Element aElement : aElements) {
+                System.out.println(aElement.toString());
+            }
+            System.out.println("===========================");
+            Elements imgElements = document.select("img[src$=png]");
+            for (Element imgElement : imgElements) {
+                System.out.println(imgElement.toString());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (httpResponse != null) {
+                try {
+                    httpResponse.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (httpClient != null) {
+                try {
+                    httpClient.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 }
