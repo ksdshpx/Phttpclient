@@ -7,7 +7,9 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
@@ -31,6 +33,47 @@ public class HttpClientTest {
         try {
             //获取HttpClient客户端
             httpClient = HttpClients.createDefault();
+            //创建HttpGet
+            httpGet = new HttpGet("https://www.tuicool.com");
+            httpGet.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:61.0)");
+            //执行
+            httpResponse = httpClient.execute(httpGet);
+            System.out.println("StatusCode:" + httpResponse.getStatusLine().getStatusCode());
+            //返回HttpEntity
+            HttpEntity httpEntity = httpResponse.getEntity();
+            System.out.println(httpEntity.getContentType().getName() + ":" + httpEntity.getContentType().getValue());
+            System.out.println(EntityUtils.toString(httpEntity, "UTF-8"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            if(httpResponse != null){
+                try {
+                    httpResponse.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(httpClient != null){
+                try {
+                    httpClient.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    @Test
+    public void testPoolConnection() {
+        CloseableHttpClient httpClient = null;
+        HttpGet httpGet = null;
+        CloseableHttpResponse httpResponse = null;
+        try {
+            //通过连接池获取HttpClient客户端
+            //httpClient = HttpClients.createDefault();
+            PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+            connectionManager.setMaxTotal(50);
+            httpClient = HttpClientBuilder.create().setConnectionManager(connectionManager).build();
             //创建HttpGet
             httpGet = new HttpGet("https://www.tuicool.com");
             httpGet.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:61.0)");
@@ -114,8 +157,9 @@ public class HttpClientTest {
             httpClient = HttpClients.createDefault();
             //创建HttpGet
             httpGet = new HttpGet("http://www.csdn.com");
+            //创建代理IP主机
             httpHost = new HttpHost("61.135.217.7",80);
-            config = RequestConfig.custom().setProxy(httpHost).build();
+            config = RequestConfig.custom().setConnectTimeout(10).setSocketTimeout(10).setProxy(httpHost).build();
             httpGet.setConfig(config);
             httpGet.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:61.0)");
             //执行
