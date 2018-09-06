@@ -44,6 +44,12 @@ public class JsoupTest {
             System.out.println("title:" + element.text());
             element = document.getElementById("site_nav_top");
             System.out.println("口号:" + element.text());
+            System.out.println("==============================================");
+            Elements itemElements = document.getElementsByClass("post_item");
+            for (Element itemElement : itemElements) {
+                System.out.println(itemElement.html());
+                System.out.println("+++++++++++++++++++++++++++++++");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
