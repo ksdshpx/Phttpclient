@@ -21,4 +21,15 @@
             overflowToDisk="true"
     />
 
+    <cache
+            name="Person"
+            maxElementsInMemory="1"
+            eternal="true"
+            timeToIdleSeconds="300"
+            timeToLiveSeconds="600"
+            overflowToDisk="true"
+            maxElementsOnDisk="0"
+            diskPersistent="true"
+    />
+
 </ehcache>

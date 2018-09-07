@@ -21,5 +21,7 @@ public class EhcacheTest {
         cache.put(element);
         Element javaEle = cache.get("java");
         System.out.println(javaEle.getObjectValue());
+        cache.flush();
+        cacheManager.shutdown();
     }
 }
